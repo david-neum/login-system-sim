@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login System Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="card" id="signWindow">
+            <h2 id="title">
+                Log in to an existing account
+            </h2>
+            <input id="username" type="text" placeholder="Username">
+            <p class="error" id="uLengthDialogue" hidden>
+                Username must be at least 5 characters long!
+            </p>
+            <p class="error" id="uOverlapDialogue" hidden>
+                Username is already taken!
+            </p>
+            <p class="error" id="uNoExistDialogue" hidden>
+                User does not exist!
+            </p>
+            <input id="pass" type="password" placeholder="Password">
+            <p class="error" id="pWrongDialogue" hidden>
+                Password is incorrect!
+            </p>
+            <p class="error" id="pLengthDialogue" hidden>
+                Password must be at least 6 characters long!
+            </p>
+            <input id="passconfirm" type="password" placeholder="Confirm password" hidden>
+            <p class="error" id="pcLengthDialogue" hidden>
+                Passwords do not match!
+            </p>
+            <button id="button1">
+                Log in
+            </button>
+            <p class="success" id="createdDialogue" hidden>
+                Account created successfully!
+            </p>
+            <p id="Dialogue">
+                New here?
+                <span class="link" id="toggleLink">
+                    Sign up!
+                </span>
+            </p>
+    </div>
+
+</body>
+<script src="script.js"></script>
+</html>
