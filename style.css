@@ -24,11 +24,21 @@ input {
 button {
     width: 100%;
     padding: 10px;
-    margin: 12px 0;
+    margin: 6px 0;
     border: none;
     border-radius: 6px;
     box-sizing: border-box;
     cursor: pointer;
+}
+
+#button1 {
+    width: 100%;
+    padding: 10px;
+    margin: 12px 0;
+    border: none;
+    border-radius: 6px;
+    box-sizing: border-box;
+    cursor: pointer;    
 }
 
 .error {

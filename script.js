@@ -1,26 +1,45 @@
 //Variables
 let state = "login";
 let currentUser = null;
+let userIndex = null;
 let link = document.getElementById("toggleLink");
 
 const title = document.getElementById("title");
 const dialogue = document.getElementById("Dialogue");
+//signup/login VISUAL
 const uError = document.getElementById("uLengthDialogue");
 const uoError = document.getElementById("uOverlapDialogue");
 const uneError = document.getElementById("uNoExistDialogue")
 const pError = document.getElementById("pLengthDialogue");
-const pcError = document.getElementById("pcLengthDialogue");
+const pcError = document.getElementById("pcWrongDialogue");
 const ipError = document.getElementById("pWrongDialogue");
 const createdMsg = document.getElementById("createdDialogue")
+//loggedin VISUAL
+const uChangeError = document.getElementById("uChangeLengthDialogue");
+const uoChangeError = document.getElementById("uChangeOverlapDialogue");
+const pChangeError = document.getElementById("pChangeLengthDialogue");
+const pcChangeError = document.getElementById("pcChangeWrongDialogue");
+//
 const signWindow = document.getElementById("signWindow");
-
+const userWindow = document.getElementById("userWindow");
+const userTitle = document.getElementById("userTitle")
+//signup/login FUNCTIONAL
 const uIN = document.getElementById("username");
 const pIN = document.getElementById("pass");
 const pcIN = document.getElementById("passconfirm");
 const btn1 = document.getElementById("button1");
+//loggedin FUNCTIONAL
+const changeuIN = document.getElementById("changedusername");
+const changepIN = document.getElementById("changedpass");
+const changepcIN = document.getElementById("passchangeconfirm")
+const deleteBtn = document.getElementById("deleteBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const changeUBtn = document.getElementById("changeUsername");
+const changePBtn = document.getElementById("changePassword");
+const cancelBtn = document.getElementById("cancelBtn");
 
 // --> Decided against Classes due to overcomplication with localStorage for a project of this size
-let users = [];
+const users = JSON.parse(localStorage.getItem("users")) || [];
 
 //Functions
 function loginToggle() {
@@ -59,28 +78,28 @@ function loginToggle() {
     }
 }
 
-function userLengthCheck() {
-    if (uIN.value.length < 5 && state == "signup") {
+function userLengthCheck(user) {
+    if (user.length < 5 && (state == "signup" || state == "changingname")) {
         uError.style.display = "block";
         return false;
-    } else if (uIN.value.length >= 5 && state == "signup") {
+    } else if (user.length >= 5 && (state == "signup" || state == "changingname")) {
         uError.style.display = "none";
         return true;
     }
 }
 
-function passLengthCheck() {
-    if (pIN.value.length < 6 && state == "signup") {
+function passLengthCheck(pass) {
+    if (pass.length < 6 && (state == "signup" || state == "changingpass")) {
         pError.style.display = "block";
         return false;
-    } else if (pIN.value.length >= 6 && state == "signup") {
+    } else if (pass.length >= 6 && (state == "signup" || state == "changingpass")) {
         pError.style.display = "none";
         return true;
     }
 }
 
-function passMatchCheck() {
-    if (pcIN.value != pIN.value && pcIN.value.length > 0) {
+function passMatchCheck(pass, passcon) {
+    if (pass != passcon && passcon.length > 0) {
         pcError.style.display = "block";
         return false;
     } else {
@@ -89,11 +108,11 @@ function passMatchCheck() {
     }
 }
 
-function userOverlapCheck() {
-    if (state == "signup") {
+function userOverlapCheck(user) {
+    if (state == "signup" || state == "changingname") {
         let overlap = false;
         for (let i=0; i<users.length; i++) {
-            if (users[i].username == uIN.value) {
+            if (users[i].username == user) {
                 overlap = true;
                 break;
             }
@@ -109,33 +128,40 @@ function userOverlapCheck() {
     }
 }
 
-function accountAction(user, pass) {
+function accountAction(user, pass, passcon) {
     if (state == "login"){
         if (users.length > 0) {
             for (let i=0; i<users.length; i++){
                 if (users[i].username == user) {
                     if (users[i].password == pass) {
+                        state = "loggedin";
                         currentUser = users[i].username;
+                        userIndex = i;
+                        user = "";
+                        pass = "";
                         signWindow.style.display = "none";
+                        userWindow.style.display = "block";
+                        userTitle.innerHTML = "Welcome, " + currentUser + ".";
                     } else {
-                        pIN.value = "";
+                        pass = "";
                         ipError.style.display = "block";
                     }
                 } else {
-                    uIN.value = "";
-                    pIN.value = "";
+                    user = "";
+                    pass = "";
                     uneError.style.display = "block";
                 }
             }
         } else {
-            uIN.value = "";
-            pIN.value = "";
+            user = "";
+            pass = "";
             uneError.style.display = "block";            
         }
 
-    } else {
-        if (userLengthCheck() && userOverlapCheck() && passLengthCheck() && passMatchCheck()) {
+    } else if (state == "signup") {
+        if (userLengthCheck(user) && userOverlapCheck(user) && passLengthCheck(pass) && passMatchCheck(pass, passcon)) {
             users.push({username: user, password: pass});
+            saveAccounts();
             createdMsg.style.display = "block";
             loginToggle();
         } else {
@@ -144,12 +170,114 @@ function accountAction(user, pass) {
     }
 }
 
+function logout(){
+    currentUser = null;
+    userIndex = null;
+    state = "login";
+    userWindow.style.display = "none";
+    uneError.style.display = "none";
+    signWindow.style.display = "block";
+}
+
+function changeUsername(){
+    if (state == "loggedin") {
+        state = "changingname";
+        userTitle.innerHTML = "Changing username";
+        changeuIN.style.display = "block";
+        cancelBtn.style.display = "block";
+        changePBtn.style.display = "none";
+        deleteBtn.style.display = "none";
+        logoutBtn.style.display = "none";
+    } else {
+        if (userLengthCheck(changeuIN.value) && userOverlapCheck(changeuIN.value)) {
+            state = "loggedin";
+            users[userIndex].username = changeuIN.value;
+            currentUser = changeuIN.value;
+            userTitle.innerHTML = "Welcome, " + currentUser + ".";
+            saveAccounts();
+            changeuIN.style.display = "none";
+            cancelBtn.style.display = "none";
+            changePBtn.style.display = "block";
+            deleteBtn.style.display = "block";
+            logoutBtn.style.display = "block";
+        }
+    }
+}
+
+function changePassword(){
+    if (state == "loggedin") {
+        state = "changingpass";
+        userTitle.innerHTML = "Changing password";
+        changepIN.style.display = "block";
+        changepcIN.style.display = "block";
+        cancelBtn.style.display = "block";
+        changePBtn.style.display = "block";
+        changeUBtn.style.display = "none";
+        deleteBtn.style.display = "none";
+        logoutBtn.style.display = "none";   
+    } else {
+        if (passLengthCheck(changepIN.value) && passMatchCheck(changepIN.value, changepcIN.value)) {
+            state = "loggedin";
+            users[userIndex].password = changepIN.value;
+            userTitle.innerHTML = "Welcome, " + currentUser + ".";
+            saveAccounts();
+            changepIN.style.display = "none";
+            changepcIN.style.display = "none";
+            cancelBtn.style.display = "none";
+            changeUBtn.style.display = "block";
+            deleteBtn.style.display = "block";
+            logoutBtn.style.display = "block";
+        }
+    }
+}
+
+function cancel(){
+    if (state == "changingname") {
+        changeuIN.style.display = "none";
+        cancelBtn.style.display = "none";
+        changePBtn.style.display = "block";
+        deleteBtn.style.display = "block";
+        logoutBtn.style.display = "block";
+    } else {
+        changepIN.style.display = "none";
+        changepcIN.style.display = "none";
+        cancelBtn.style.display = "none";
+        changeUBtn.style.display = "block";
+        deleteBtn.style.display = "block";
+        logoutBtn.style.display = "block";
+    }
+    state = "loggedin";
+    userTitle.innerHTML = "Welcome, " + currentUser + ".";
+}
+
+function deleteAccount(){
+    users.splice(userIndex, 1);
+    saveAccounts();
+    logout();
+}
+
+//general
+function saveAccounts(){
+    localStorage.setItem("users", JSON.stringify(users));
+}
+
+//login/signup EVENTLISTENERS
 link.addEventListener("click", loginToggle);
-uIN.addEventListener("keyup", userLengthCheck);
-uIN.addEventListener("focusout", userOverlapCheck);
-pIN.addEventListener("keyup", passLengthCheck);
-pIN.addEventListener("keyup", passMatchCheck);
-pcIN.addEventListener("keyup", passMatchCheck);
+uIN.addEventListener("keyup", function(){
+    userLengthCheck(uIN.value);
+});
+uIN.addEventListener("focusout", function(){
+    userOverlapCheck(uIN.value);
+});
+pIN.addEventListener("keyup", function(){
+    passLengthCheck(pIN.value);
+});
+pIN.addEventListener("keyup", function(){
+    passMatchCheck(pIN.value, pcIN.value);
+});
+pcIN.addEventListener("keyup", function(){
+    passMatchCheck(pIN.value, pcIN.value);
+});
 
 uIN.addEventListener("focusin", function() {
     if (state == "login") {
@@ -167,6 +295,13 @@ pIN.addEventListener("focusin", function() {
     }
 })
 
-btn1.addEventListener("click", () => {
-    accountAction(uIN.value, pIN.value)
+btn1.addEventListener("click", function() {
+    accountAction(uIN.value, pIN.value, pcIN.value);
 });
+
+//logged in EVENTLISTENERS
+logoutBtn.addEventListener("click", logout);
+deleteBtn.addEventListener("click", deleteAccount);
+changeUBtn.addEventListener("click", changeUsername);
+changePBtn.addEventListener("click", changePassword);
+cancelBtn.addEventListener("click", cancel);

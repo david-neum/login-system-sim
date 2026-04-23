@@ -30,7 +30,7 @@
                 Password must be at least 6 characters long!
             </p>
             <input id="passconfirm" type="password" placeholder="Confirm password" hidden>
-            <p class="error" id="pcLengthDialogue" hidden>
+            <p class="error" id="pcWrongDialogue" hidden>
                 Passwords do not match!
             </p>
             <button id="button1">
@@ -45,6 +45,42 @@
                     Sign up!
                 </span>
             </p>
+    </div>
+
+    <div class="card" id="userWindow" hidden>
+        <h2 id="userTitle">
+
+        </h2>
+        <input id="changedusername" type="text" placeholder="Username" hidden>
+        <p class="error" id="uChangeLengthDialogue" hidden>
+            Username must be at least 5 characters long!
+        </p>
+        <p class="error" id="uChangeOverlapDialogue" hidden>
+            Username is already taken!
+        </p>
+        <input id="changedpass" type="password" placeholder="Password" hidden>
+        <p class="error" id="pChangeMatchDialogue" hidden>
+            Password must be at least 6 characters long!
+        </p>
+        <input id="passchangeconfirm" type="password" placeholder="Confirm password" hidden>
+        <p class="error" id="pcChangeWrongDialogue" hidden>
+            Passwords do not match!
+        </p>
+        <button id="changeUsername">
+            Change username
+        </button>
+        <button id="changePassword">
+            Change password
+        </button>
+        <button id="deleteBtn">
+            Delete account
+        </button>
+        <button id="logoutBtn">
+            Log out
+        </button>
+        <button id="cancelBtn" hidden>
+            Cancel
+        </button>
     </div>
 
 </body>
