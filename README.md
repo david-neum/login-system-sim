@@ -19,13 +19,13 @@ Clone the repository and open index.html in your browser
 - Input validation
 - Account creation
 - Account login
-
-## Work in Progress
-The following features are not implemented yet:
-
-- Post-login screen (logging in will currently lead to blank page)
-- LocalStorage
-- Clearing LocalStorage
+- Account deletion
 - Changing account details
 - Logging out
-- Deleting accounts
+- LocalStorage (accounts persist)
+
+## Work in Progress
+The following feature is not implemented yet:
+
+- Clearing LocalStorage
+- Dark Mode
