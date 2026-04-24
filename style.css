@@ -6,10 +6,16 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #f4f6f8;
+    color: black;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+}
+
+body.dark {
+    background: #1e1e1e;
+    color: white;
 }
 
 input {
@@ -41,6 +47,18 @@ button {
     cursor: pointer;    
 }
 
+body.dark input {
+    background-color: #3a3a3a;
+    color: white;
+    border: 1px solid #555;
+}
+
+
+body.dark button {
+    background-color: #444;
+    color: white;
+}
+
 .error {
     color:red;
     font-size: 11px;
@@ -67,10 +85,38 @@ button {
     text-decoration: underline;
 }
 
+body.dark .link {
+    color: #66aaff;
+}
+
+body.dark .link:hover {
+    color: #aaccff;
+}
+
 .card {
     background-color: white;
     padding: 2rem;
     border-radius: 12px;
     width: 320px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+body.dark .card {
+    background-color: #2c2c2c;
+}
+
+.sidecard {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: white;
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    width: 200px;    
+}
+
+body.dark .sidecard {
+    background-color: #2c2c2c;
 }

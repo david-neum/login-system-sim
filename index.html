@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+
     <div class="card" id="signWindow">
             <h2 id="title">
                 Log in to an existing account
@@ -47,6 +47,15 @@
             </p>
     </div>
 
+    <div class="sidecard" id="toolWindow">
+        <button id="themeBtn">
+            Toggle Theme
+        </button>
+        <button id="wipeLocalStorageBtn">
+            Delete all accounts
+        </button>
+    </div>
+
     <div class="card" id="userWindow" hidden>
         <h2 id="userTitle">
 
@@ -59,7 +68,7 @@
             Username is already taken!
         </p>
         <input id="changedpass" type="password" placeholder="Password" hidden>
-        <p class="error" id="pChangeMatchDialogue" hidden>
+        <p class="error" id="pChangeLengthDialogue" hidden>
             Password must be at least 6 characters long!
         </p>
         <input id="passchangeconfirm" type="password" placeholder="Confirm password" hidden>

@@ -1,9 +1,11 @@
 //Variables
 let state = "login";
+let wipeConfirm = false;
 let currentUser = null;
 let userIndex = null;
 let link = document.getElementById("toggleLink");
 
+const savedTheme = localStorage.getItem("theme");
 const title = document.getElementById("title");
 const dialogue = document.getElementById("Dialogue");
 //signup/login VISUAL
@@ -38,8 +40,16 @@ const changeUBtn = document.getElementById("changeUsername");
 const changePBtn = document.getElementById("changePassword");
 const cancelBtn = document.getElementById("cancelBtn");
 
+const themeBtn = document.getElementById("themeBtn");
+const wipeBtn = document.getElementById("wipeLocalStorageBtn");
+
+
 // --> Decided against Classes due to overcomplication with localStorage for a project of this size
-const users = JSON.parse(localStorage.getItem("users")) || [];
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+}
 
 //Functions
 function loginToggle() {
@@ -79,31 +89,55 @@ function loginToggle() {
 }
 
 function userLengthCheck(user) {
-    if (user.length < 5 && (state == "signup" || state == "changingname")) {
-        uError.style.display = "block";
+    if (user.length < 5) {
+        if (state == "signup") {
+            uError.style.display = "block";
+        } else {
+            uChangeError.style.display = "block";
+        }
         return false;
-    } else if (user.length >= 5 && (state == "signup" || state == "changingname")) {
-        uError.style.display = "none";
+    } else if (user.length >= 5) {
+        if (state == "signup") {
+            uError.style.display = "none";
+        } else {
+            uChangeError.style.display = "none";
+        }
         return true;
     }
 }
 
 function passLengthCheck(pass) {
     if (pass.length < 6 && (state == "signup" || state == "changingpass")) {
-        pError.style.display = "block";
+        if (state == "signup") {
+            pError.style.display = "block";
+        } else {
+            pChangeError.style.display = "block";
+        }
         return false;
     } else if (pass.length >= 6 && (state == "signup" || state == "changingpass")) {
-        pError.style.display = "none";
+        if (state == "signup") {
+            pError.style.display = "none";
+        } else {
+            pChangeError.style.display = "none";
+        }
         return true;
     }
 }
 
 function passMatchCheck(pass, passcon) {
     if (pass != passcon && passcon.length > 0) {
-        pcError.style.display = "block";
+        if (state == "signup") {
+            pcError.style.display = "block";
+        } else if (state == "changingpass"){
+            pcChangeError.style.display = "block";
+        }
         return false;
     } else {
-        pcError.style.display = "none";
+        if (state == "signup") {
+            pcError.style.display = "none";
+        } else if (state == "changingpass"){
+            pcChangeError.style.display = "none";
+        }
         return true;
     }
 }
@@ -112,19 +146,29 @@ function userOverlapCheck(user) {
     if (state == "signup" || state == "changingname") {
         let overlap = false;
         for (let i=0; i<users.length; i++) {
-            if (users[i].username == user) {
+            if (users[i].username.toLowerCase() == user.toLowerCase()) {
                 overlap = true;
                 break;
             }
         }
 
-        if (overlap == true){
-            uoError.style.display = "block";
+        if (overlap == true) {
+            if (state == "signup") {
+                uoError.style.display = "block";
+            } else {
+                uoChangeError.style.display = "block";
+            }
             return false;
         } else {
-            uoError.style.display = "none";
+            if (state == "signup") {
+                uoError.style.display = "none";
+            } else {
+                uoChangeError.style.display = "none";
+            }
             return true;
         }
+    } else {
+        return false;
     }
 }
 
@@ -182,7 +226,7 @@ function logout(){
 function changeUsername(){
     if (state == "loggedin") {
         state = "changingname";
-        userTitle.innerHTML = "Changing username";
+        userTitle.innerHTML = "Change username";
         changeuIN.style.display = "block";
         cancelBtn.style.display = "block";
         changePBtn.style.display = "none";
@@ -207,7 +251,7 @@ function changeUsername(){
 function changePassword(){
     if (state == "loggedin") {
         state = "changingpass";
-        userTitle.innerHTML = "Changing password";
+        userTitle.innerHTML = "Change password";
         changepIN.style.display = "block";
         changepcIN.style.display = "block";
         cancelBtn.style.display = "block";
@@ -233,12 +277,16 @@ function changePassword(){
 
 function cancel(){
     if (state == "changingname") {
+        uoChangeError.style.display = "none";
+        uChangeError.style.display = "none";
         changeuIN.style.display = "none";
         cancelBtn.style.display = "none";
         changePBtn.style.display = "block";
         deleteBtn.style.display = "block";
         logoutBtn.style.display = "block";
     } else {
+        pChangeError.style.display = "none";
+        pcChangeError.style.display = "none";
         changepIN.style.display = "none";
         changepcIN.style.display = "none";
         cancelBtn.style.display = "none";
@@ -263,23 +311,23 @@ function saveAccounts(){
 
 //login/signup EVENTLISTENERS
 link.addEventListener("click", loginToggle);
-uIN.addEventListener("keyup", function(){
+uIN.addEventListener("keyup", () => {
     userLengthCheck(uIN.value);
 });
-uIN.addEventListener("focusout", function(){
+uIN.addEventListener("focusout", () => {
     userOverlapCheck(uIN.value);
 });
-pIN.addEventListener("keyup", function(){
+pIN.addEventListener("keyup", () => {
     passLengthCheck(pIN.value);
 });
-pIN.addEventListener("keyup", function(){
+pIN.addEventListener("keyup", () => {
     passMatchCheck(pIN.value, pcIN.value);
 });
-pcIN.addEventListener("keyup", function(){
+pcIN.addEventListener("keyup", () => {
     passMatchCheck(pIN.value, pcIN.value);
 });
-
-uIN.addEventListener("focusin", function() {
+    //Hiding messages once activity to correct user inputs is detected
+uIN.addEventListener("focusin", () => {
     if (state == "login") {
         uneError.style.display = "none";
         createdMsg.style.display = "none";
@@ -288,14 +336,14 @@ uIN.addEventListener("focusin", function() {
     }
 })
 
-pIN.addEventListener("focusin", function() {
+pIN.addEventListener("focusin", () => {
     if (state == "login") {
         ipError.style.display = "none";
         createdMsg.style.display = "none";
     }
 })
 
-btn1.addEventListener("click", function() {
+btn1.addEventListener("click", () => {
     accountAction(uIN.value, pIN.value, pcIN.value);
 });
 
@@ -305,3 +353,54 @@ deleteBtn.addEventListener("click", deleteAccount);
 changeUBtn.addEventListener("click", changeUsername);
 changePBtn.addEventListener("click", changePassword);
 cancelBtn.addEventListener("click", cancel);
+
+changeuIN.addEventListener("keyup", () => {
+    userLengthCheck(changeuIN.value);
+});
+changeuIN.addEventListener("focusout", () => {
+    userOverlapCheck(changeuIN.value);
+});
+changepIN.addEventListener("keyup", () => {
+    passLengthCheck(changepIN.value);
+});
+changepIN.addEventListener("keyup", () => {
+    passMatchCheck(changepIN.value, changepcIN.value);
+});
+changepcIN.addEventListener("keyup", () => {
+    passMatchCheck(changepIN.value, changepcIN.value);
+});
+
+changeuIN.addEventListener("focusin", () => {
+    uoChangeError.style.display = "none";
+})
+
+changepIN.addEventListener("focusin", () => {
+    pChangeError.style.display = "none";
+})
+
+wipeBtn.addEventListener("click", () => {
+    if (wipeConfirm == false) {
+        wipeConfirm = true;
+        wipeBtn.textContent = "Click again to confirm"
+    } else if (wipeConfirm == true) {
+        wipeConfirm = false;
+        users = [];
+        logout(); 
+        saveAccounts();
+        wipeBtn.textContent = "Accounts deleted";
+    }
+})
+
+themeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+})
+
+wipeBtn.addEventListener("mouseleave", () => {
+    if (wipeConfirm == false) {
+        wipeBtn.textContent = "Delete all accounts";
+    } else if (wipeConfirm == true) {
+        wipeConfirm = false;
+        wipeBtn.textContent = "Delete all accounts";
+    }
+})
